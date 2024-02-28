@@ -1,6 +1,7 @@
 from abc import ABC
 
 from snowflake_local.engine.models import Query
+from snowflake_local.engine.postgres.db_state import State
 from snowflake_local.engine.query_processors import QueryProcessor as _QueryProcessor
 from snowflake_local.server.models import QueryResponse
 from sqlglot import exp
@@ -20,7 +21,7 @@ class QueryProcessor(ABC):
         Initialize and create the required resources (e.g., functions) against the given database.
 
         The following utility method can be used to execute queries against the underlying Postgres DB:
-            snowflake_local.engine.postgres.db_state.State.Server.run_query(query: str, database: str)
+            snowflake_local.engine.postgres.db_state.State.server.run_query(query: str, database: str)
         """
 
     def should_apply(self, query: Query) -> bool:
@@ -28,7 +29,14 @@ class QueryProcessor(ABC):
         return True
 
     def transform_query(self, expression: exp.Expression, query: Query) -> exp.Expression:
-        """Preprocess the given query fragment, apply any required transformations, return the result."""
+        """
+        Preprocess the given query fragment, apply any required transformations, return the result.
+
+        Note that this method gets called on the initial user-defined query after we've parsed it
+        via `sqlglot`. This method is called recursively for all query fragments (tree nodes)
+        in the abstract syntax tree of the query, as outlined here:
+        https://github.com/tobymao/sqlglot/blob/7b2cff84f9a544435aa22954536eb7c9c2632816/README.md?plain=1#L276-L294
+        """
         return expression
 
     def postprocess_result(self, query: Query, result: QueryResponse):
@@ -41,7 +49,7 @@ class QueryProcessor(ABC):
 
         Higher returned number means higher priority, i.e., processors with higher
         priority number are executed prior to processors with lower numbers. Execution
-        order of processors with the same priority number is indeterministic.
+        order of processors with the same priority number is non-deterministic.
         """
         return 0
 
@@ -51,7 +59,7 @@ class QueryProcessor(ABC):
 # ---
 
 
-class ProcessHelloWorldQueries(_QueryProcessor):
+class HandleHelloWorldQueries(_QueryProcessor):
 
     def transform_query(self, expression: exp.Expression, **kwargs) -> exp.Expression:
         from sqlglot import parse_one  # noqa
@@ -62,3 +70,20 @@ class ProcessHelloWorldQueries(_QueryProcessor):
         #       return sqlglot.parse_one("SELECT 'string to return ...'")
 
         return expression
+
+
+class HandleStartswithFunction(_QueryProcessor):
+    """
+    Query processor to enable the STARTSWITH(..) Snowflake SQL function:
+    https://docs.snowflake.com/en/sql-reference/functions/startswith
+    """
+
+    def initialize_db_resources(self, database: str):
+        # TODO: use the run_query(..) method below to create a custom SQL function that
+        #  implements `STARTSWITH(string1, string2)` in the given database.
+        # The following function languages are available and installed: SQL, plpython3u, plv8
+
+        init_query = """
+        ...
+        """
+        State.server.run_query(query=init_query, database=database)
