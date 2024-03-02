@@ -43,16 +43,22 @@ build:          	## Build the extension
 	cp -r setup.py setup.cfg README.md snowflake_ext build/
 	(cd build && python setup.py sdist)
 
-start:            	## Start LocalStack in detached mode
-	$(VENV_RUN); DOCKER_FLAGS='-e DEBUG_PLUGINS=1 '"$(DOCKER_FLAGS)" DEBUG=1 EXTENSION_DEV_MODE=1 localstack start -d; localstack wait -t 60 && echo LocalStack is ready to use! || (echo Gave up waiting on LocalStack, exiting. && exit 1)
+start:            	## Start LocalStack in extensions dev mode
+	$(VENV_RUN); IMAGE_NAME=localstack/snowflake DOCKER_FLAGS='-e DEBUG_PLUGINS=1 -e SF_LOG=trace'"$(DOCKER_FLAGS)" DEBUG=1 EXTENSION_DEV_MODE=1 localstack start
 
 stop:            	## Stop the Running LocalStack container
 	$(VENV_RUN); localstack stop
 
-enable: $(wildcard ./build/dist/localstack-snowflake-hello-world-*.tar.gz)	## Enable the extension in LocalStack
+enable-dev: build   ## Enable the extension in LocalStack in dev mode
+	localstack extensions dev enable .
+
+disable-dev: build   ## Disable the extension in LocalStack in dev mode
+	localstack extensions dev disable .
+
+enable: $(wildcard ./build/dist/localstack-snowflake-hello-world-*.tar.gz)	## Enable/install the extension in LocalStack
 	$(VENV_RUN); \
 		pip uninstall --yes localstack-snowflake-hello-world; \
 		localstack extensions uninstall localstack-snowflake-hello-world; \
 		localstack extensions -v install file://./$?
 
-.PHONY: clean dist install publish lint format build test start stop logs
+.PHONY: clean dist install publish lint format build test start stop logs enable enable-dev

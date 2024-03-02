@@ -11,9 +11,9 @@ def test_query_hello_world(db_execute):
 
 def test_query_endswith_function(db_execute):
     # positive test case
-    result = db_execute("SELECT STARTSWITH('localstack-snowflake', 'localstack-')")
+    result = db_execute("SELECT ENDSWITH('localstack-snowflake', 'snowflake')")
     assert result == [(True,)]
 
     # negative test case
-    result = db_execute("SELECT STARTSWITH('localstack-snowflake', 'foobar-')")
+    result = db_execute("SELECT ENDSWITH('localstack-snowflake', 'foobar')")
     assert result == [(False,)]

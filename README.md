@@ -6,7 +6,7 @@ Sample repo for adding new query processors to the LocalStack Snowflake emulator
 
 * Python 3.10+
 * Docker
-* LocalStack Pro account, with Snowflake extension enabled
+* LocalStack Pro account, with access to the Snowflake emulator (beta)
 
 ## Installing
 
@@ -21,17 +21,17 @@ For all commands below, make sure to have your `LOCALSTACK_AUTH_TOKEN` configure
 
 Run this command to build the extension in this repo:
 ```
-$ make build
+$ make dist
 ```
 
-Run this command to install the extension into the LocalStack environment:
+Run this command to enable this project as a LocalStack extension in dev mode:
 ```
-$ make enable
+$ make enable-dev
 ```
 
-Run the following command to start up LocalStack Snowflake:
+Run the following command to start up LocalStack Snowflake with this project enabled as an extension in dev mode:
 ```
-$ IMAGE_NAME=localstack/snowflake SF_LOG=trace DEBUG=1 localstack start
+$ make start
 ```
 
 If the installation was successful, you should be able to `curl` the session endpoint:
@@ -47,7 +47,7 @@ Use this target to trigger the integration tests, which will run a couple of sim
 $ make test
 ```
 
-To iterate on the tests: Whenever you make some changes to the plugin logic, make sure to run `make build; make enable`, and then restart your LocalStack container to fully re-load the code in a new session. Once restarted, the tests can be executed again via `make test`.
+To iterate on the tests: Whenever you make some changes to the plugin logic, restart your LocalStack container to fully re-load the code in a new session - the changes should get loaded automatically as the extension is installed in dev mode (i.e., local code gets mounted into the container). Once restarted, the tests can be executed again via `make test`.
 
 ## License
 

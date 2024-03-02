@@ -72,15 +72,15 @@ class HandleHelloWorldQueries(_QueryProcessor):
         return expression
 
 
-class HandleStartswithFunction(_QueryProcessor):
+class HandleEndswithFunction(_QueryProcessor):
     """
-    Query processor to enable the STARTSWITH(..) Snowflake SQL function:
-    https://docs.snowflake.com/en/sql-reference/functions/startswith
+    Query processor to enable the ENDSWITH(..) Snowflake SQL function:
+    https://docs.snowflake.com/en/sql-reference/functions/endswith
     """
 
     def initialize_db_resources(self, database: str):
         # TODO: use the run_query(..) method below to create a custom SQL function that
-        #  implements `STARTSWITH(string1, string2)` in the given database.
+        #  implements `ENDSWITH(string1, string2)` in the given database.
         # The following function languages are available and installed: SQL, plpython3u, plv8
 
         init_query = """
