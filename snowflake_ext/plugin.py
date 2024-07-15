@@ -16,12 +16,11 @@ class QueryProcessor(ABC):
     the underlying Postgres DB engine.
     """
 
-    def initialize_db_resources(self, database: str):
+    def initialize_db_resources(self) -> str | None:
         """
-        Initialize and create the required resources (e.g., functions) against the given database.
+        Initialize and create the required resources (e.g., functions) against a newly created database.
 
-        The following utility method can be used to execute queries against the underlying Postgres DB:
-            snowflake_local.engine.postgres.db_state.State.server.run_query(query: str, database: str)
+        This method can return a string of SQL queries (separated by ';') to execute against the DB.
         """
 
     def should_apply(self, query: Query) -> bool:
@@ -78,12 +77,13 @@ class HandleEndswithFunction(_QueryProcessor):
     https://docs.snowflake.com/en/sql-reference/functions/endswith
     """
 
-    def initialize_db_resources(self, database: str):
-        # TODO: use the run_query(..) method below to create a custom SQL function that
-        #  implements `ENDSWITH(string1, string2)` in the given database.
+    def initialize_db_resources(self) -> str | None:
+        # TODO: Use this method to return the definition of a custom SQL function
+        #  that implements `ENDSWITH(string1, string2)` in the given database.
         # The following function languages are available and installed: SQL, plpython3u, plv8
 
         init_query = """
         ...
         """
-        State.server.run_query(query=init_query, database=database)
+
+        return init_query
