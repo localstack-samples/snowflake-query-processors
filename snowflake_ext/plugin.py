@@ -1,7 +1,6 @@
 from abc import ABC
 
 from snowflake_local.engine.models import Query
-from snowflake_local.engine.postgres.db_state import State
 from snowflake_local.engine.query_processors import QueryProcessor as _QueryProcessor
 from snowflake_local.server.models import QueryResponse
 from sqlglot import exp
@@ -78,12 +77,15 @@ class HandleEndswithFunction(_QueryProcessor):
     """
 
     def initialize_db_resources(self) -> str | None:
+        from snowflake_local.engine.transforms import apply_query_transforms
+
         # TODO: Use this method to return the definition of a custom SQL function
         #  that implements `ENDSWITH(string1, string2)` in the given database.
-        # The following function languages are available and installed: SQL, plpython3u, plv8
+        # The following function languages are available and installed: SQL, plpython3u, javascript
 
         init_query = """
         ...
         """
 
+        init_query = apply_query_transforms(init_query).query
         return init_query
