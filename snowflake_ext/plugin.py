@@ -1,8 +1,8 @@
 from abc import ABC
 
-from snowflake_local.engine.models import Query
-from snowflake_local.engine.query_processors import QueryProcessor as _QueryProcessor
-from snowflake_local.server.models import QueryResponse
+from localstack.pro.snowflake.engine.models import Query
+from localstack.pro.snowflake.engine.query_processors import QueryProcessor as _QueryProcessor
+from localstack.pro.snowflake.server.models import QueryResponse
 from sqlglot import exp
 
 
@@ -70,17 +70,17 @@ class HandleHelloWorldQueries(_QueryProcessor):
         return expression
 
 
-class HandleEndswithFunction(_QueryProcessor):
+class HandleRegexpCountFunction(_QueryProcessor):
     """
-    Query processor to enable the ENDSWITH(..) Snowflake SQL function:
-    https://docs.snowflake.com/en/sql-reference/functions/endswith
+    Query processor to enable the REGEXP_COUNT(..) Snowflake SQL function:
+    https://docs.snowflake.com/en/sql-reference/functions/regexp_count
     """
 
     def initialize_db_resources(self) -> str | None:
-        from snowflake_local.engine.transforms import apply_query_transforms
+        from localstack.pro.snowflake.engine.transforms import apply_query_transforms
 
         # TODO: Use this method to return the definition of a custom SQL function
-        #  that implements `ENDSWITH(string1, string2)` in the given database.
+        #  that implements `REGEXP_COUNT()` in the given database.
         # The following function languages are available and installed: SQL, plpython3u, javascript
 
         init_query = """

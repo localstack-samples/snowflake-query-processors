@@ -40,6 +40,11 @@ $ curl -d '{}' snowflake.localhost.localstack.cloud:4566/session
 {"success": true}
 ```
 
+To stop the running LocalStack instance run:
+```
+$ make stop
+```
+
 ## Testing
 
 Use this target to trigger the integration tests, which will run a couple of simple commands/queries against the local Snowflake emulator:
