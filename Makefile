@@ -44,7 +44,7 @@ build:          	## Build the extension
 	(cd build && python setup.py sdist)
 
 start:            	## Start LocalStack in extensions dev mode
-	$(VENV_RUN); IMAGE_NAME=localstack/snowflake DOCKER_FLAGS='-e DEBUG_PLUGINS=1 -e SF_LOG=trace'"$(DOCKER_FLAGS)" DEBUG=1 EXTENSION_DEV_MODE=1 localstack start
+	$(VENV_RUN); IMAGE_NAME=localstack/snowflake:1.2.0 DOCKER_FLAGS='-e DEBUG_PLUGINS=1 -e SF_LOG=trace'"$(DOCKER_FLAGS)" DEBUG=1 EXTENSION_DEV_MODE=1 localstack start
 
 stop:            	## Stop the Running LocalStack container
 	$(VENV_RUN); localstack stop
