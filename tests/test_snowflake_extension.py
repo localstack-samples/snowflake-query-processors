@@ -9,11 +9,31 @@ def test_query_hello_world(db_execute):
     assert result == [("Hello LocalStack Snowflake!",)]
 
 
-def test_query_endswith_function(db_execute):
-    # positive test case
-    result = db_execute("SELECT ENDSWITH('localstack-snowflake', 'snowflake')")
-    assert result == [(True,)]
+def test_query_regexp_count_function(db_execute):
+    # Test basic regex pattern matching
+    result = db_execute("SELECT REGEXP_COUNT('hello world hello', 'hello')")
+    assert result == [(2,)]
 
-    # negative test case
-    result = db_execute("SELECT ENDSWITH('localstack-snowflake', 'foobar')")
-    assert result == [(False,)]
+    # Test with case sensitive pattern
+    result = db_execute("SELECT REGEXP_COUNT('Hello World HELLO', 'hello')")
+    assert result == [(0,)]
+
+    # Test with case insensitive flag
+    result = db_execute("SELECT REGEXP_COUNT('Hello World HELLO', 'hello', 1, 'i')")
+    assert result == [(3,)]
+
+    # Test with position parameter
+    result = db_execute("SELECT REGEXP_COUNT('hello world hello', 'hello', 7)")
+    assert result == [(1,)]
+
+    # Test with no matches
+    result = db_execute("SELECT REGEXP_COUNT('hello world', 'goodbye')")
+    assert result == [(0,)]
+
+    # Test with empty string
+    result = db_execute("SELECT REGEXP_COUNT('', 'hello')")
+    assert result == [(0,)]
+
+    # Test with NULL values (should handle gracefully)
+    result = db_execute("SELECT REGEXP_COUNT(NULL, 'hello')")
+    assert result == [(None,)]
